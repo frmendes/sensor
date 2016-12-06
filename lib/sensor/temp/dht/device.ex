@@ -1,6 +1,6 @@
 
 defmodule Sensor.Temp.Dht.Device do
-  
+require Logger
 @moduledoc """
 This module will read the DHT temp sensor and prcoess
 the result into an elixir value
@@ -33,9 +33,9 @@ be depend on how this app is used. You may need to create this directory for you
     |> parse_result
   end
 
-  defp parse_result( result ) do
+  def parse_result( result ) do
     # result looks like "Temp=20.0*  Humidity=34.0%\n"
-    match = Regex.named_captures( ~r/Temp=( ?<temp>.+ )\*.+Humidity=( ?<humidity>.+ )%/, result )
+    match = Regex.named_captures( ~r/Temp=(?<temp>.+)\*.+Humidity=(?<humidity>.+)%/, result )
 
     case match do
       %{ "temp" => t, "humidity" => h } -> 
@@ -60,8 +60,9 @@ be depend on how this app is used. You may need to create this directory for you
     case result do
       { txt, 0 } ->
         txt
-      { _, err } when err > 0 ->
-        "OS level sensor error"
+      { msg, err } when err > 0 ->
+        Logger.error "The file 'bin/DHT.py' could not be found in the app's top level directory"
+        msg
       _ ->
         "Unexpected result from call_sensor"
     end
