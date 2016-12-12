@@ -15,7 +15,7 @@ case, it will pause and then try again.
   @behaviour Sensor.Temp
   use GenServer
 
-   @device Application.get_env( :sensor, :sensor_temp_dht )
+   @device Application.get_env( :sensor, :sensor_temp_dht, Sensor.Temp.Dht.Device )
 
   ## API callbacks
 
