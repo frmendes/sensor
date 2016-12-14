@@ -15,8 +15,6 @@ case, it will pause and then try again.
   @behaviour Sensor.Temp
   use GenServer
 
-   @device Application.get_env( :sensor, :sensor_temp_dht, Sensor.Temp.Dht.Device )
-
   ## API callbacks
 
   @doc """
@@ -99,7 +97,8 @@ case, it will pause and then try again.
   end
 
   defp read_dht( type, gpio, tries ) do
-    result = @device.read( type, gpio )
+    device = Application.get_env( :sensor, :sensor_temp_dht, Sensor.Temp.Dht.Device )
+    result = device.read( type, gpio )
     case result do
       { :ok, %{ temp: temp } } ->
         %Sensor.Temp{ unit: "°C", value: temp, status: :ok }
