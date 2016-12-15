@@ -16,7 +16,7 @@ defmodule Sensor.Temp.DhtTest do
 
     test "can get the temperature", %{type: type, gpio: gpio, name: name} do
       assert {:ok, _PID} = Dht.start_link(type, gpio, name)
-      assert %Sensor.Temp{ unit: _unit, value: value, status: _status} = Dht.read(name)
+      assert {:ok, %Sensor.Temp{ unit: _unit, value: value, status: _status}} = Dht.read(name)
       assert value == 20.0
     end
 
@@ -33,7 +33,7 @@ defmodule Sensor.Temp.DhtTest do
     test "can set the dht values", %{type: type, gpio: gpio, name: name} do
       assert {:ok, _pid} = Dht.start_link(type, gpio, name)
       assert :ok = Dht.set_temp(name, 22)
-      assert %Sensor.Temp{ unit: _unit, value: value, status: _status} = Dht.read(name)
+      assert {:ok, %Sensor.Temp{ unit: _unit, value: value, status: _status}} = Dht.read(name)
       assert value == 22.0
     end
 
@@ -41,14 +41,14 @@ defmodule Sensor.Temp.DhtTest do
       assert {:ok, _pid} = Dht.start_link(type, 4, :t4)
       assert {:ok, _pid} = Dht.start_link(type, 5, :t5)
       assert :ok = Dht.set_temp(:t4, 22)
-      assert %Sensor.Temp{ value: val_a} = Dht.read(:t4)
+      assert {:ok, %Sensor.Temp{ value: val_a}} = Dht.read(:t4)
       assert val_a == 22.0
       assert :ok = Dht.set_temp(:t5, 24)
-      assert %Sensor.Temp{ value: val_b} = Dht.read(:t5)
+      assert {:ok, %Sensor.Temp{ value: val_b}} = Dht.read(:t5)
       assert val_b == 24.0
-      assert %Sensor.Temp{ value: val_a} = Dht.read(:t4)
+      assert {:ok, %Sensor.Temp{ value: val_a}} = Dht.read(:t4)
       assert val_a == 22.0
-      assert %Sensor.Temp{ value: val_b} = Dht.read(:t5)
+      assert {:ok, %Sensor.Temp{ value: val_b}} = Dht.read(:t5)
       assert val_b == 24.0
     end
   end

@@ -16,7 +16,8 @@ defmodule TempTest do
       sensor_params = [type, gpio]
       name = :temp_c
       assert {:ok, _pid} = Temp.start(sensor_mod, sensor_params, name)
-      assert %Temp{} = struct = Temp.sense(:temp_c)
+      assert {:ok, struct} = Temp.sense(:temp_c)
+      assert %Temp{} = struct
       assert struct.value == 20.0
     end
 
@@ -34,7 +35,8 @@ defmodule TempTest do
       name = :temp_d
       assert {:error, _message} = Temp.start(sensor_mod, bad_params, name)
       assert {:ok, _pid} = Temp.start(sensor_mod, sensor_params, name)
-      assert %Temp{} = struct = Temp.sense(:temp_d)
+      assert {:ok, struct} = Temp.sense(:temp_d)
+      assert %Temp{} = struct
       assert struct.value == 20.0
     end
 
@@ -42,17 +44,17 @@ defmodule TempTest do
       name = :b
       sensor_params = [type, gpio]
       assert {:ok, pid} = Temp.start(sensor_mod, sensor_params, name)
-      assert %Temp{ value: value } = Temp.sense(name)
+      assert {:ok, %Temp{ value: value }} = Temp.sense(name)
       assert value == 20.0
       sensor_mod.set_temp(name, 22)
-      assert %Temp{ value: value } = sensor_mod.read(name)
+      assert {:ok, %Temp{ value: value }} = sensor_mod.read(name)
       assert value == 22.0
       assert Process.exit(pid, :shutdown)
       # There seems to be delay in the process restart.
       # The inspec call gives enough time for the child to restart
       inspect Supervisor.count_children(SensorSupervisor)
       inspect Supervisor.count_children(SensorSupervisor)
-      assert %Temp{ value: value } = sensor_mod.read(name)
+      assert {:ok, %Temp{ value: value }} = sensor_mod.read(name)
       assert value == 20.0 #default temp value
     end
 
@@ -63,8 +65,8 @@ defmodule TempTest do
       inspect Supervisor.count_children(SensorSupervisor)
       inspect Supervisor.count_children(SensorSupervisor)
       sensor_mod.set_temp(name1, 22)
-      assert %Temp{ value: value1 } = sensor_mod.read(name1)
-      assert %Temp{ value: value2 } = sensor_mod.read(name2)
+      assert {:ok, %Temp{ value: value1 }} = sensor_mod.read(name1)
+      assert {:ok, %Temp{ value: value2 }} = sensor_mod.read(name2)
       assert value1 == 22.0
       assert value2 == 20.0
     end
@@ -73,8 +75,8 @@ defmodule TempTest do
       sensor_params = [type, gpio]
       name = :temp_e
       assert {:ok, _pid} = Temp.start(sensor_mod, sensor_params, name)
-      assert %Temp{} = struct = Temp.sense(:temp_e)
-      assert struct.value == 20.0
+      assert {:ok, %Temp{ value: value }} = Temp.sense(:temp_e)
+      assert value == 20.0
       assert {:error, _msg} = Temp.sense(:does_not_exist)
     end
 

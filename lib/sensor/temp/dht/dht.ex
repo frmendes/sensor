@@ -71,7 +71,7 @@ case, it will pause and then try again.
   end
 
   def handle_call( :read, _from, state = { _type, _gpio, struct } ) do
-    { :reply, struct, state }
+    { :reply, {:ok, struct}, state }
   end
 
   def handle_call( { :set_temp, temp }, _from, _state = { type, gpio, temp_struct } ) do
