@@ -3,7 +3,7 @@ defmodule Sensor.Temp do
   This is an abstract temperature sensor module.
 
   Specific types of temperature sensors can be implemented as sub-modules.
-  If the sub-modules implement the defined behaviour, then the business 
+  If the sub-modules implement the defined behaviour, then the business
   logic in your app doesn't need to care about which instance of temperature
   sensor is being used.
   """
@@ -18,7 +18,7 @@ defmodule Sensor.Temp do
   defstruct unit: "°C",
             value: -99.9,
             status: :init
-  
+
   @doc """
   Will attempt to start the supervised sensor process.  This sensor can
   later be referenced by the `name` parameter.
@@ -29,7 +29,7 @@ defmodule Sensor.Temp do
   ```
   """
   def start( module, params, name ) do
-    Supervisor.start_child( @supervisor, build_spec( module, params, name ) ) 
+    Supervisor.start_child( @supervisor, build_spec( module, params, name ) )
   end
 
   @doc """
@@ -55,8 +55,7 @@ defmodule Sensor.Temp do
     case Process.whereis( name ) do
       nil -> { :error, "This process does not exist" }
       _ ->  { _, _, _, [ list|_ ] } = :sys.get_status( name  )
-            [ a | _ ] = list
-            { _, { mod, _, _ } } = a 
+            { mod, _, _ } = list[:"$initial_call"]
             mod
     end
   end
